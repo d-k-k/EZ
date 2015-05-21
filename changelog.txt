@@ -1,0 +1,183 @@
+
+V1.15
+4/14/15
+
+Added better layer movement methods.
+EZElements now have the following methods available:
+  getLayer()
+	Will return the draw layer index this element is on
+  setLayer(int)
+	Will set this element to the specified draw index.
+	Elements within groups are limited to the group’s inner layer.
+	Moving higher will shift affected elements lower.
+	Moving lower will shift affected elements higher.
+  placeBelow(EZElement)
+	Will set this elements draw layer below the specified element.
+	Done by extracting this element and placing below the specified element.
+  placeAbove(EZElement)
+	Will set this elements draw layer above the specified element.
+	Done by extracting this element and placing above the specified element.
+
+--------------------
+
+V1.14
+4/6/15
+Fixed a bug with pullToFront()
+
+--------------------
+
+V1.13
+2/8/15
+Documentation updates.
+
+--------------------
+
+V1.12
+1/10/15
+Fixed an error with sound playback.
+
+--------------------
+
+V1.11
+1/9/15
+Removed all marked deprecated code.
+Cleaned code to remove all compile warnings.
+
+--------------------
+
+V1.10
+1/8/15
+Fixes made to EZImage.
+  If a focus area is set getWidth and getHeight methods now return the width and height of the focus area
+	rather than the image original width and height.
+  If a focus area is set isPointInElement() will return true if the point is within the new adjusted area
+	based upon the width and height of the focus area around the center instead of using the entire image
+	boundaries.
+	
+Changes made to EZInteraction.
+  Added getXMouse and getYMouse method which will return the corresponding coordinate of the mouse if it is
+    on the window. If not, then the methods will return -1. This was made to remove the following methods.
+    
+  Depreciated getXMouseMove, getYMouseMove, getXMouseClick, getYMouseClick.
+    The get move methods just returned the location of the mouse if it was over the window.
+    The click checks should be used to determine which button was clicked. Otherwise the location of the
+      cursor at time of click is its position on the window at that time. The only difference is that the
+      get click methods returned -1 if the click methods returned false, but the cursor is still on window.
+
+
+--------------------
+
+V1.09
+11/10/14
+
+Major updates to EZImage, EZInteraction, and EZSound.
+
+EZImage now allows for subsection focusing. Significance is ability to use sprite sheets.
+  public void setFocus(int xTopLeftCorner, int yTopLeftCorner, int xBottomRightCorner, int yBottomRightCorner)
+	The four int parameters represent two points. Upper left and lower right to form a rectangle.
+	The area marked by the rectangle within the image will be displayed rather than the whole image.
+	In this manner it is also possible to flip the image based upon the position of the two points.
+  public void releaseFocus()
+    Will release the focus and revert to displaying the entire image.
+  public boolean hasFocus()
+    Will return true if a focus area has been set, otherwise false.
+
+EZInteraction now allows for better mouse button checks with respect to left and right mouse buttons.
+Much like keys, it is possible to check if the left/right mouse button was pressed, is down, or was released.
+	public static boolean wasMouseLeftButtonPressed()
+	public static boolean wasMouseRightButtonPressed() 
+	public static boolean isMouseLeftButtonDown()
+	public static boolean isMouseRightButtonDown()
+	public static boolean wasMouseLeftButtonReleased()
+	public static boolean wasMouseRightButtonReleased()
+The getXMouseMove() and getYMouseMove() have also been changed to detect mouse movement even if the button is down.
+
+EZSound has bug fixes and a number of support methods added.
+	public void play()
+	  Will now play based upon position on the file.
+	public void stop()
+	  Will now stop the sound file and reset the position to the start.
+	public void pause()
+	  Has been added, this will halt the sound at its current position. Using play() will resume from that position.
+	public int getFrameLength()
+	  Will return the number of frames in the sound file.
+	public int getFramePosistion()
+	  Will return the current position with respect to frame number.
+	public long getMicroSecondLength()
+	  Will return the length of the sound file in microseconds.
+	public long getMicroSecondPosition()
+	  Will return the current position with respect to microseconds.
+	public void setFramePosition(int pos) 
+	  Will set the current position to the specified frame number.
+	public void setMicrosecondPosition(int pos)
+	  Will set the current position to the specified microsecond position, but limited by frame association.
+	public double getLevel()
+	  Might return the amplitude of the current position. Doesn't work on all systems due to sound driver support.
+
+--------------------
+
+V1.08
+9/2/14
+
+Change to the background flushing so that Windows machines do not have a right and lower ghosting zone.
+
+--------------------
+
+V1.07
+9/1/14
+Implemented all font setting feature of 1.05 without the bug where the last drawn EZText element settings were
+used for all EZText elements.
+
+--------------------
+
+V1.06
+8/31/14
+Rollback to v1.02 due to a bug where all EZText elements were using the values of the one which was drawn last.
+
+--------------------
+
+V1.05
+8/30/14
+EZText has beem modified to allow loading a font from a .ttf file through setFont().
+Added support methods and made changes to setFont() and paint().
+
+--------------------
+
+V1.04
+8/25/14
+Method added to EZ:
+  public static EZText addText(String fontName, int x, int y, String msg, Color c, int fs) 
+Allows the user to specify a font name when adding an EZText element.
+
+--------------------
+
+V1.03
+8/24/14
+Added the ability to change the font of the EZText elements.
+To support this additional methods have been added to EZText:
+  public static void printAvailableFontsToConsole()
+  public static String[] getAllFontNames()
+  public void setFont(String name)
+  public String getFontName()
+
+Added a variable to track the font name.
+Edits made to constructor, paint, getWidth, getHeight.
+
+--------------------
+
+V1.02
+8/20/14
+Fixed a bug with EZ.refreshScreen() where it was actually getting about 50% more than the specified frame rate.
+Added a silent error tracker for situations that did not need to halt the program.
+
+--------------------
+
+V1.01
+8/19/14
+Logo by Jason Leigh
+
+--------------------
+
+V1.00
+8/19/14
+Released
