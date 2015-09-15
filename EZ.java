@@ -942,8 +942,7 @@ public class EZ extends JPanel {
    * @param height for the content area of the window.
    */
   public static void initialize(int width, int height) {
-    initialize((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int) Toolkit.getDefaultToolkit()
-        .getScreenSize().getHeight(), "ICS111");
+    initialize(width, height, "ICS111");
   }
 
   /**
