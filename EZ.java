@@ -33,6 +33,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -915,8 +916,8 @@ public class EZ extends JPanel {
    * @param width for the content area of the window.
    * @param height for the content area of the window.
    */
-  public static void initialize(int width, int height) {
-    String windowName = "ICS111";
+  public static void initialize(int width, int height, Image icon, String name) {
+    String windowName = name;
     JFrame frame = new JFrame(windowName);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -924,6 +925,7 @@ public class EZ extends JPanel {
     EZ newContentPane = new EZ(width, height);
     newContentPane.setOpaque(true); // content panes must be opaque
     frame.setContentPane(newContentPane);
+    frame.setIconImage(icon);
 
     // Size the frame according to largest element, then display the window.
     frame.setResizable(false);
@@ -940,7 +942,7 @@ public class EZ extends JPanel {
    */
   public static void initialize() {
     initialize((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int) Toolkit.getDefaultToolkit()
-        .getScreenSize().getHeight());
+        .getScreenSize().getHeight(), null, "ICS111");
   }
   
   public static void trackedErrorPrint() {
