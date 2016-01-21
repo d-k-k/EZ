@@ -202,6 +202,18 @@ public class EZ extends JPanel {
   public static void setBackgroundColor(Color c) {
     backgroundColor = c;
   }
+  
+  /**
+   * Will pause the program for the specified amount of milliseconds.
+   * Mechanically this is just an encapsulated sleep.
+   * 
+   * @param msToPauseFor how many milliseconds to pause for.
+   */
+  public static void pause(long msToPauseFor) {
+    //The try/catch is strictly by requirement. Realistically no error should result from the sleep.
+    try { Thread.sleep(msToPauseFor); }
+    catch (InterruptedException e) {}
+  }
 
   /**
    * Used to repaint the application. Without this call, any changes made to the elements will not be visibly seen. This
