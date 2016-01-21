@@ -1,6 +1,6 @@
 /*
 Copyright (c) 6/23/2014, Dylan Kobayashi
-Version: 1/29/2016
+Version: 1/20/2016
 Laboratory for Advanced Visualization and Applications, University of Hawaii at Manoa.
 All rights reserved.
 
