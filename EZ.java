@@ -926,9 +926,10 @@ public class EZ extends JPanel {
    * 
    * @param width for the content area of the window.
    * @param height for the content area of the window.
+   * @param name for the window.
    */
-  public static void initialize(int width, int height) {
-    String windowName = "ICS111";
+  public static void initialize(int width, int height, String name) {
+    String windowName = name;
     JFrame frame = new JFrame(windowName);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -945,6 +946,17 @@ public class EZ extends JPanel {
     lastUpdate = System.currentTimeMillis();
   }
 
+    /**
+   * This will setup EZ for usage. Without calling this method first, none of the other EZ methods will work correctly.
+   * Window will default to use the full dimensions of the screen. Do not call this method more than once in a program
+   * run.
+   * @param width for the content area of the window.
+   * @param height for the content area of the window.
+   */
+  public static void initialize(int width, int height) {
+    initialize(width, height, "ICS111");
+  }
+
   /**
    * This will setup EZ for usage. Without calling this method first, none of the other EZ methods will work correctly.
    * Window will default to use the full dimensions of the screen. Do not call this method more than once in a program
@@ -952,7 +964,7 @@ public class EZ extends JPanel {
    */
   public static void initialize() {
     initialize((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int) Toolkit.getDefaultToolkit()
-        .getScreenSize().getHeight());
+        .getScreenSize().getHeight(), "ICS111");
   }
   
   public static void trackedErrorPrint() {
