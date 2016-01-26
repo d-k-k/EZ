@@ -1,4 +1,30 @@
 
+v1.17
+1/25/16
+
+Reworked EZInteraction class to support keycode checks.
+	Should be backwards compatible with the overload methods.
+	Major mechanical difference is that key status is tracked through a HashMap.
+	All keys that aren't visible are tracked as ("kc" + keycode)
+	Key checks are based on Java standard key codes as defined in KeyEvent class.
+		https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html
+	Example:
+		EZInteraction.isKeyDown( KeyEvent.VK_UP );
+		EZInteraction.isKeyDown( KeyEvent.VK_DOWN );
+		EZInteraction.isKeyDown( KeyEvent.VK_LEFT );
+		EZInteraction.isKeyDown( KeyEvent.VK_RIGHT );
+		EZInteraction.isKeyDown( KeyEvent.VK_SHIFT );
+
+--------------------
+
+V1.16
+1/20/16
+
+Added EZ.pause( ms );
+	Will pause the whole program for specified milliseconds.
+
+--------------------
+
 V1.15
 4/14/15
 
