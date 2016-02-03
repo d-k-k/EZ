@@ -1,6 +1,6 @@
 /*
 Copyright (c) 6/23/2014, Dylan Kobayashi
-Version: 1/25/2016
+Version: 2/3/2016
 Laboratory for Advanced Visualization and Applications, University of Hawaii at Manoa.
 All rights reserved.
 
@@ -84,6 +84,7 @@ public class EZ extends JPanel {
 
   /** Used for external referencing. */
   public static EZ app;
+  private static ArrayList<JFrame> openWindows = new ArrayList<>();
 
   /** Width. This needs to match the values given in the applet properties or there may be visual chopping. */
   private static int WWIDTH;
@@ -241,6 +242,7 @@ public class EZ extends JPanel {
         errorMsg += "EZ.refreshScreen() error with sleep:" + e.getMessage() + "\n";
       }
     }
+    closeWindowWithIndex(-9999);
   }// end refresh screen.
 
   /**
@@ -946,6 +948,15 @@ public class EZ extends JPanel {
     frame.setVisible(true);
     timeDelta = 0;
     lastUpdate = System.currentTimeMillis();
+    
+    //account for number of windows
+    openWindows.add(frame);
+    if (openWindows.size() > 1 ) {
+      for(int i = 0; i < openWindows.size(); i++) {
+        openWindows.get(i).setTitle("ICS 111 - Window " + i);
+        openWindows.get(i).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      }
+    }
   }
 
   /**
@@ -956,6 +967,37 @@ public class EZ extends JPanel {
   public static void initialize() {
     initialize((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int) Toolkit.getDefaultToolkit()
         .getScreenSize().getHeight());
+  }
+  
+  /**
+   * Will close the specified window. Numbers may change when windows close. This will depend on their order of creation.
+   */
+  public static void closeWindowWithIndex(int windowNumber) {
+    if ( (windowNumber >= 0) && (windowNumber < openWindows.size()) ) {
+      //get the window to close, remove from open windows, then dispose of it
+      JFrame windowToClose = openWindows.get(windowNumber);
+      openWindows.remove(windowToClose);
+      windowToClose.dispose();
+    }
+    else if( windowNumber != -9999) {
+    	System.out.println("Invalid window index given:" + windowNumber + ". Not closing a window.");
+    }
+    //window checks: close if no windows. 1 window gets the close app on close. Renumber windows.
+    if(openWindows.size() == 0) { System.exit(0); }
+    else if(openWindows.size() == 1) { openWindows.get(0).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); }
+    else {
+      for(int i = 0; i < openWindows.size(); i++) {
+        openWindows.get(i).setTitle("ICS 111 - Window index:" + i);
+        openWindows.get(i).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      }
+    }
+  } //end closeWindowWithoutClosingApplication
+  
+  /**
+   * Will return the number of open windows.
+   */
+  public static int getNumberOfOpenWindows() {
+	  return openWindows.size();
   }
   
   public static void trackedErrorPrint() {

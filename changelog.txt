@@ -1,4 +1,33 @@
 
+v1.18
+2/3/16
+
+Started infrastructure for multiple window management.
+Currently just tracks open windows and prevent one window from causing full application
+close if multiple windows are open. Windows will be renamed after each additional window 
+is created. Additional window creation was not originally intended but turned out to be
+possible by using multiple calls of EZ.initialize() throughout one program.
+
+Now able to programatically close windows. Closing the last open window in this fashion will
+cause the application to close. If an invalid window index is given, no windows will be
+closed. But an warning message will be logged to console.
+	EZ.closeWindowWithoutClosingApplication( indexOfWindow );
+
+The index of window is determined by order of open. Each close will cause the windows to
+be renumbered. For example, to close all windows and the program:
+	while(true) { EZ.closeWindowWithoutClosingApplication( 0 ); }
+
+Closing window 0 means close the oldest open window. While true loop will continously close
+the oldest open window. When the last open window is closed in the manner, the program will
+also close.
+
+To find the amount of open windows:
+	EZ.getNumberOfOpenWindows();
+
+
+
+--------------------
+
 v1.17
 1/25/16
 
