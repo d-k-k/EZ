@@ -1,4 +1,19 @@
 
+v1.19
+2/7/16
+
+Adjustments to window handling. Previous version was impractical in some cases.
+Now initialize() methods return an int.
+Windows have a non-changing index number.
+
+	int winId = EZ.initialize();
+	EZ.closeWindowWithIndex( winId );
+
+Program will automatically close within a few seconds when there are no active windows.
+
+--------------------
+
+
 v1.18
 2/3/16
 
@@ -11,11 +26,11 @@ possible by using multiple calls of EZ.initialize() throughout one program.
 Now able to programatically close windows. Closing the last open window in this fashion will
 cause the application to close. If an invalid window index is given, no windows will be
 closed. But an warning message will be logged to console.
-	EZ.closeWindowWithoutClosingApplication( indexOfWindow );
+	EZ.closeWindowWithIndex( indexOfWindow ());
 
 The index of window is determined by order of open. Each close will cause the windows to
 be renumbered. For example, to close all windows and the program:
-	while(true) { EZ.closeWindowWithoutClosingApplication( 0 ); }
+	while(true) { EZ.closeWindowWithIndex( 0 ); }
 
 Closing window 0 means close the oldest open window. While true loop will continously close
 the oldest open window. When the last open window is closed in the manner, the program will

@@ -1,6 +1,6 @@
 /*
 Copyright (c) 6/23/2014, Dylan Kobayashi
-Version: 2/3/2016
+Version: 2/7/2016
 Laboratory for Advanced Visualization and Applications, University of Hawaii at Manoa.
 All rights reserved.
 
@@ -932,7 +932,7 @@ public class EZ extends JPanel {
    * @param width for the content area of the window.
    * @param height for the content area of the window.
    */
-  public static void initialize(int width, int height) {
+  public static int initialize(int width, int height) {
     String windowName = "ICS111";
     JFrame frame = new JFrame(windowName);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -953,10 +953,11 @@ public class EZ extends JPanel {
     openWindows.add(frame);
     if (openWindows.size() > 1 ) {
       for(int i = 0; i < openWindows.size(); i++) {
-        openWindows.get(i).setTitle("ICS 111 - Window " + i);
-        openWindows.get(i).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        openWindows.get(i).setTitle("ICS 111 - Window index:" + i);
+        //openWindows.get(i).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       }
     }
+    return (openWindows.size() - 1);
   }
 
   /**
@@ -964,8 +965,8 @@ public class EZ extends JPanel {
    * Window will default to use the full dimensions of the screen. Do not call this method more than once in a program
    * run.
    */
-  public static void initialize() {
-    initialize((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int) Toolkit.getDefaultToolkit()
+  public static int initialize() {
+    return initialize((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int) Toolkit.getDefaultToolkit()
         .getScreenSize().getHeight());
   }
   
@@ -975,15 +976,16 @@ public class EZ extends JPanel {
   public static void closeWindowWithIndex(int windowNumber) {
     if ( (windowNumber >= 0) && (windowNumber < openWindows.size()) ) {
       //get the window to close, remove from open windows, then dispose of it
-      JFrame windowToClose = openWindows.get(windowNumber);
-      openWindows.remove(windowToClose);
-      windowToClose.dispose();
+      //JFrame windowToClose = openWindows.get(windowNumber);
+      //openWindows.remove(windowToClose);
+      //windowToClose.dispose();
+      openWindows.get(windowNumber).dispose();
     }
     else if( windowNumber != -9999) {
     	System.out.println("Invalid window index given:" + windowNumber + ". Not closing a window.");
     }
     //window checks: close if no windows. 1 window gets the close app on close. Renumber windows.
-    if(openWindows.size() == 0) { System.exit(0); }
+    if(openWindows.size() == 0) { System.exit(0); System.out.println("Closing program, no open windows."); }
     else if(openWindows.size() == 1) { openWindows.get(0).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); }
     else {
       for(int i = 0; i < openWindows.size(); i++) {
