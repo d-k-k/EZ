@@ -1,4 +1,18 @@
 
+v1.20
+2/9/16
+
+Added functions:
+	EZ.setCurrentWindow( windowIndex );
+		This function will set the window which receives draw commands and refresh commands.
+		Allows changes to older windows rather than only being able to add to newest.
+	EZ.refreshScreenOfAllActiveWindows();
+		This function will refresh all active widows. It also applies the same frame rate delay of refreshScreen.
+
+Modified functions to enable window switching, added tracking variables for the different instances and status.
+
+--------------------
+
 v1.19
 2/7/16
 
@@ -12,7 +26,6 @@ Windows have a non-changing index number.
 Program will automatically close within a few seconds when there are no active windows.
 
 --------------------
-
 
 v1.18
 2/3/16
