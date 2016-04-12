@@ -1,6 +1,6 @@
 /*
 Copyright (c) 6/23/2014, Dylan Kobayashi
-Version: 2/9/2016
+Version: 4/11/2016
 Laboratory for Advanced Visualization and Applications, University of Hawaii at Manoa.
 All rights reserved.
 
@@ -2119,9 +2119,8 @@ class EZText extends EZElement {
         }
       }
       if(match){
-        fontName = name;
-        EZ.app.setFont(new Font(fontName, Font.PLAIN, fontSize));
-        dFont = EZ.app.getFont();
+    	fontName = name;
+        dFont = new Font(fontName, Font.PLAIN, fontSize);
       }
       else {
         System.out.println("ERROR: EZText is unable to use the specified font because it not on this system:" + name);

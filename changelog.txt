@@ -1,4 +1,13 @@
 
+v1.21
+4/11/16
+
+Bug fix:
+	Fixed an issue where EZText font could be randomly set to any currently used font.
+	Caused by threading issue. Solved by simplfying calls.
+
+--------------------
+
 v1.20
 2/9/16
 
