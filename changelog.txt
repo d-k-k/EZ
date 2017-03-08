@@ -1,4 +1,23 @@
 
+v1.22
+3/8/17
+
+Bug fix:
+	One of the MacOS updates implemented secondary key features.
+		By holding down a keyboard key, if available a menu for different modification of the letter will show.
+		While a feature of the MacOS, causes buggy behavior with Java event detection.
+			Basically when the feature is triggered, Java will be unable to detect key press.
+	This effect is persistent, but can be undone.
+		Open Terminal, then copy and paste the following line:
+			defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
+
+Added functions:
+	EZ.addText(x, y, string);
+		Color is automatically set as black.
+	EZSound class now has isPlaying() method. Returns true if clip is playing, otherwise false.
+
+--------------------
+
 v1.21
 4/11/16
 

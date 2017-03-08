@@ -1,6 +1,6 @@
 /*
 Copyright (c) 6/23/2014, Dylan Kobayashi
-Version: 4/11/2016
+Version: 3/8/2017
 Laboratory for Advanced Visualization and Applications, University of Hawaii at Manoa.
 All rights reserved.
 
@@ -84,9 +84,9 @@ public class EZ extends JPanel {
 
   /** Used for external referencing. */
   public static EZ app;
-  private static ArrayList<JFrame> 	openWindows = new ArrayList<>();
+  private static ArrayList<JFrame>     openWindows = new ArrayList<>();
   private static ArrayList<Boolean> openWindowsStatus = new ArrayList<>();
-  private static ArrayList<EZ> 		openWindowEz = new ArrayList<>();
+  private static ArrayList<EZ>         openWindowEz = new ArrayList<>();
 
   /** Width. This needs to match the values given in the applet properties or there may be visual chopping. */
   private static int WWIDTH;
@@ -251,12 +251,12 @@ public class EZ extends JPanel {
    * 
    */
   public static void refreshScreenOfAllActiveWindows(){
-	  refreshScreen();
-	  for(int i = 0; i < openWindows.size(); i++) {
-		  if( openWindowsStatus.get(i) ) {
-			  openWindowEz.get(i).repaint();
-		  }
-	  }
+      refreshScreen();
+      for(int i = 0; i < openWindows.size(); i++) {
+          if( openWindowsStatus.get(i) ) {
+              openWindowEz.get(i).repaint();
+          }
+      }
   }
   
   /**
@@ -397,13 +397,37 @@ public class EZ extends JPanel {
    * 
    * Color must be specified. Don't forget to import Color.
    * 
-   * Example usage: EZText t; t = EZ.addText( 200, 200, Color.BLACK, true);
+   * Example usage: EZText t; t = EZ.addText( 200, 200, "Hello  World");
+   * 
+   * @param x center.
+   * @param y center.
+   * @param msg that will be displayed.
+   * @return the text.
+   */
+  public static EZText addText(int x, int y, String msg) {
+    return addText(x, y, msg, Color.BLACK, 10);
+  }
+
+  /**
+   * Adds text to the window. Returns the text for later manipulation. If not immediately assigned to a variable,
+   * chances are you will have this element stuck on screen which cannot be removed. As result in most cases you will
+   * want to assign it to a variable.
+   * 
+   * It might not be easy to calculate left or right bound until after creation since the x,y values are where the
+   * text's center will be placed.
+   * 
+   * Text cannot have their width and height manually set, that will depend on the content of the text. Using this
+   * addText() method will default the text size to 10px.
+   * 
+   * Color must be specified. Don't forget to import Color.
+   * 
+   * Example usage: EZText t; t = EZ.addText( 200, 200, "Hello World", Color.BLACK);
    * 
    * @param x center.
    * @param y center.
    * @param msg that will be displayed.
    * @param c color of the text
-   * @return the circle.
+   * @return the text.
    */
   public static EZText addText(int x, int y, String msg, Color c) {
     return addText(x, y, msg, c, 10);
@@ -421,14 +445,14 @@ public class EZ extends JPanel {
    * 
    * Color must be specified. Don't forget to import Color.
    * 
-   * Example usage: EZText t; t = EZ.addText( 200, 200, Color.BLACK, true, 20);
+   * Example usage: EZText t; t = EZ.addText( 200, 200, "Hello World", Color.BLACK, 20);
    * 
    * @param x center.
    * @param y center.
    * @param msg that will be displayed.
    * @param c color of the text
    * @param fs size of the font in pixels.
-   * @return the circle.
+   * @return the text.
    */
   public static EZText addText(int x, int y, String msg, Color c, int fs) {
     EZText vc = new EZText(x, y, msg, c, fs);
@@ -449,7 +473,7 @@ public class EZ extends JPanel {
    * 
    * Color must be specified. Don't forget to import Color.
    * 
-   * Example usage: EZText t; t = EZ.addText("Arial", 200, 200, Color.BLACK, true, 20);
+   * Example usage: EZText t; t = EZ.addText("Arial", 200, 200, "Hello World", Color.BLACK, 20);
    * 
    * @param fontName to display the msg in. Must be available to the system. A nonexistent font will output a console error, but will not halt the program.
    * @param x center.
@@ -457,7 +481,7 @@ public class EZ extends JPanel {
    * @param msg that will be displayed.
    * @param c color of the text
    * @param fs size of the font in pixels.
-   * @return the circle.
+   * @return the text.
    */
   public static EZText addText(String fontName, int x, int y, String msg, Color c, int fs) {
     EZText vc = new EZText(x, y, msg, c, fs);
@@ -947,6 +971,16 @@ public class EZ extends JPanel {
    * @param height for the content area of the window.
    */
   public static int initialize(int width, int height) {
+    // First time 
+    String osName = System.getProperty("os.name").toLowerCase();
+    if(osName.indexOf("mac") >= 0){
+      try {
+        Runtime.getRuntime().exec("defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false");
+      } catch (IOException e) {
+        System.out.println("Unable to perform Mac keyboard change");
+      }
+    }
+    
     String windowName = "ICS111";
     JFrame frame = new JFrame(windowName);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -987,7 +1021,7 @@ public class EZ extends JPanel {
    */
   public static void setCurrentWindow(int windowIndex) {
     if( windowIndex > -1 && windowIndex < openWindows.size() && openWindowsStatus.get(windowIndex) ) {
-    	app = openWindowEz.get(windowIndex);
+        app = openWindowEz.get(windowIndex);
     }
   }
   
@@ -1004,7 +1038,7 @@ public class EZ extends JPanel {
       openWindowsStatus.set(windowIndex, false);
     }
     else if( windowIndex != -9999) {
-    	System.out.println("Invalid window index given:" + windowIndex + ". Not closing a window.");
+        System.out.println("Invalid window index given:" + windowIndex + ". Not closing a window.");
     }
 //    //window checks: close if no windows. 1 window gets the close app on close. Renumber windows.
 //    if(openWindows.size() == 0) { System.exit(0); System.out.println("Closing program, no open windows."); }
@@ -1021,11 +1055,11 @@ public class EZ extends JPanel {
    * Will return the number of open windows.
    */
   public static int getNumberOfOpenWindows() {
-	  int count = 0;
-	  for(int i = 0; i < openWindows.size(); i++) {
-		  if(openWindowsStatus.get(i)) { count++; }
-	  }
-	  return count;
+      int count = 0;
+      for(int i = 0; i < openWindows.size(); i++) {
+          if(openWindowsStatus.get(i)) { count++; }
+      }
+      return count;
   }
   
   public static void trackedErrorPrint() {
@@ -2119,7 +2153,7 @@ class EZText extends EZElement {
         }
       }
       if(match){
-    	fontName = name;
+        fontName = name;
         dFont = new Font(fontName, Font.PLAIN, fontSize);
       }
       else {
@@ -3299,6 +3333,15 @@ class EZSound {
   public void loop() {
     sound.setFramePosition(0);
     sound.loop(Clip.LOOP_CONTINUOUSLY);
+  }
+
+  /**
+   * Will return true if this EZSound is playing. Otherwise false.
+   * @return true if playing. Otherwise false.
+   * 
+   */
+  public boolean isPlaying() {
+    return sound.isRunning();
   }
   
   /** 
