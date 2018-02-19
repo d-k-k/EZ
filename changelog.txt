@@ -1,4 +1,13 @@
 
+v1.23
+2/1/2018
+
+Bug fix:
+	JDK 9 has a change that alters canvas scaling.
+	Added detection of canvas starting scale value, then applies that scaling along with the EZElement scale value.
+
+--------------------
+
 v1.22
 3/8/17
 

@@ -1,6 +1,6 @@
 /*
 Copyright (c) 6/23/2014, Dylan Kobayashi
-Version: 3/8/2017
+Version: 2/1/2018
 Laboratory for Advanced Visualization and Applications, University of Hawaii at Manoa.
 All rights reserved.
 
@@ -110,6 +110,10 @@ public class EZ extends JPanel {
   /**Used for silent error tracking.*/
   private static int errorCounter = 0;
   private static String errorMsg = "";
+  
+  /** Used for scale tracking on JDKv9. Some cases where starting scale is 2. */
+  private static volatile double startingPaintScaleX = 1;
+  private static volatile double startingPaintScaleY = 1;
 
   /**
    * This frustrating variable is necessary to get keyboard input detection working. Determined through trial and error.
@@ -189,6 +193,10 @@ public class EZ extends JPanel {
     Graphics2D g2 = (Graphics2D) g;
     g2.setColor(backgroundColor); // wash the background with specified bg color to prevent ghosting.
     g2.fillRect(0, 0, WWIDTH + 100, WHEIGHT + 100);
+    
+    // Track the scale the canvas originally starts at
+    startingPaintScaleX = g2.getTransform().getScaleX();
+    startingPaintScaleY = g2.getTransform().getScaleY();
 
     for (int i = 0; i < elements.size(); i++) {
       if(!elements.get(i).hasParent()){
@@ -197,6 +205,21 @@ public class EZ extends JPanel {
     }
 
   } // end paint
+  
+  /**
+   * Retrieves the canvas' starting x scale.
+   * @return double value of the starting x scale.
+  */
+  public static double getStartingPaintScaleX() {
+	  return startingPaintScaleX;
+  }
+  /**
+   * Retrieves the canvas' starting y scale.
+   * @return double value of the starting x scale.
+  */
+  public static double getStartingPaintScaleY() {
+	  return startingPaintScaleY;
+  }
 
   /**
    * This method will set the background color to the given color. Don't forget to import the Color when using this.
@@ -1514,6 +1537,18 @@ abstract class EZElement {
    * @return the final AffineTransform that will be applied to the shape.
    */
   public static AffineTransform transformHelper(EZElement oe) {
+    return transformHelper(oe, false);
+  }
+
+  /**
+   * Returns the transform before being applied to the shape. The transform is affected by all groups this element is
+   * contained in.
+   * 
+   * @param oe The EZElement which to get the affine transform of.
+   * @param scaleAdjust Whether or not original scale adjustment should be taken into account.
+   * @return the final AffineTransform that will be applied to the shape.
+   */
+  public static AffineTransform transformHelper(EZElement oe, boolean scaleAdjust) {
     AffineTransform af = new AffineTransform();
     ArrayList<EZElement> ancestors = new ArrayList<EZElement>();
     EZElement temp;
@@ -1530,8 +1565,22 @@ abstract class EZElement {
       af.scale(temp.getScale(), temp.getScale());
       af.rotate(Math.toRadians(temp.getRotation()));
     }
-    af.translate(oe.getXCenter(), oe.getYCenter());
-    af.scale(oe.getScale(), oe.getScale());
+
+    /* Original code
+    // af.translate(oe.getXCenter(), oe.getYCenter());
+    // af.scale(oe.getScale(), oe.getScale());
+    */
+    // As of version 9, the canvas has a starting scale of 2.0 which messes with transform calculations
+    if (scaleAdjust) {
+        af.translate(oe.getXCenter() * EZ.getStartingPaintScaleX(), oe.getYCenter() * EZ.getStartingPaintScaleX());
+    } else {
+        af.translate(oe.getXCenter(), oe.getYCenter());
+    }
+    if (scaleAdjust) {
+        af.scale(oe.getScale() * EZ.getStartingPaintScaleX(), oe.getScale() * EZ.getStartingPaintScaleX());
+    } else {
+        af.scale(oe.getScale(), oe.getScale());
+    }
     af.rotate(Math.toRadians(oe.getRotation()));
     return af;
   } // end boundHelper
@@ -1957,7 +2006,7 @@ class EZText extends EZElement {
       // only print if the message has visible characters.
       if (msg.trim().length() > 0) {
         AffineTransform tmp = g2.getTransform();
-        g2.setTransform(EZElement.transformHelper(this));
+        g2.setTransform(EZElement.transformHelper(this, true));
         g2.drawString(msg, -getWidth() / 2, getHeight() / 3);
         g2.setTransform(tmp);
       }
@@ -2309,8 +2358,20 @@ class EZImage extends EZElement {
         g2.drawString(err, (int) xCenter - wos / 2, (int) yCenter);
       }
       else {
-        AffineTransform tmp = g2.getTransform();
-        g2.setTransform(EZElement.transformHelper(this));
+        AffineTransform originalG2 = g2.getTransform();
+        AffineTransform thisObjectTransform = EZElement.transformHelper(this, true);
+//        System.out.printf("Starting scale: x: %s, y: %s%n", EZ.getStartingPaintScaleX(), EZ.getStartingPaintScaleY());
+//        thisObjectTransform.setToScale(
+//        		thisObjectTransform.getScaleX() * EZ.getStartingPaintScaleX(),
+//        		thisObjectTransform.getScaleY() * EZ.getStartingPaintScaleY());
+//        thisObjectTransform.setToTranslation(
+//        		thisObjectTransform.getTranslateX() * EZ.getStartingPaintScaleX(),
+//        		thisObjectTransform.getTranslateY() * EZ.getStartingPaintScaleY());
+//        System.out.printf("Starting rotation: x: %s, y: %s%n",
+//        		thisObjectTransform.rota.getStartingPaintScaleX(), EZ.getStartingPaintScaleY());
+//        thisObjectTransform.rotation
+        g2.setTransform(thisObjectTransform);
+        // adjust scale
         if(imgHasFocus) {
           g2.drawImage(img,
               -(xbrf - xtlf)/2, -(ybrf-ytlf)/2,
@@ -2321,7 +2382,7 @@ class EZImage extends EZElement {
         else {
           g2.drawImage(img, -img.getWidth() / 2, -img.getHeight() / 2, null);
         }
-        g2.setTransform(tmp);
+        g2.setTransform(originalG2);
       }
     }
   }// end paint
@@ -3732,4 +3793,3 @@ class EZGroup extends EZElement {
   }
 
 } // end EZGroup
-
