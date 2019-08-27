@@ -1,6 +1,6 @@
 /*
 Copyright (c) 6/23/2014, Dylan Kobayashi
-Version: 2/1/2018
+Version: 8/26/2019
 Laboratory for Advanced Visualization and Applications, University of Hawaii at Manoa.
 All rights reserved.
 
@@ -64,6 +64,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.event.MouseInputListener;
+// Enable mp3
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import javafx.embed.swing.JFXPanel;
+
 
 /**
  * Interaction with the EZ class should be done through the public static methods. EZ extends a JPanel which are among
@@ -154,6 +160,8 @@ public class EZ extends JPanel {
     this.getInputMap().put(KeyStroke.getKeyStroke("pressed X"), "pressed");
     this.getActionMap().put("pressed", xPress);
 
+    // Enable mp3
+    final JFXPanel fxPanel = new JFXPanel();
   } // end constructor
 
   /**
@@ -211,14 +219,14 @@ public class EZ extends JPanel {
    * @return double value of the starting x scale.
   */
   public static double getStartingPaintScaleX() {
-	  return startingPaintScaleX;
+    return startingPaintScaleX;
   }
   /**
    * Retrieves the canvas' starting y scale.
    * @return double value of the starting x scale.
   */
   public static double getStartingPaintScaleY() {
-	  return startingPaintScaleY;
+    return startingPaintScaleY;
   }
 
   /**
@@ -3325,6 +3333,9 @@ class EZSound {
   //protected Clip sound;
   protected Clip sound;
   protected String filename;
+  protected boolean usingMp3 = false;
+  protected Media mp3sound;
+  protected MediaPlayer mp3Player;
 
 
   /**
@@ -3348,9 +3359,17 @@ class EZSound {
     }
     */
     try {
-      AudioInputStream ais = AudioSystem.getAudioInputStream(new File(file).getAbsoluteFile());
-      sound = AudioSystem.getClip();
-      sound.open(ais);
+      // If ends with .mp3
+      if (file.toLowerCase().lastIndexOf(".mp3") == (file.length() - 4) ) {
+        mp3sound = new Media(new File(file).toURI().toString());
+        mp3Player = new MediaPlayer(this.mp3sound);
+        usingMp3 = true;
+        System.out.println("usingmp3");
+      } else {
+        AudioInputStream ais = AudioSystem.getAudioInputStream(new File(file).getAbsoluteFile());
+        sound = AudioSystem.getClip();
+        sound.open(ais);
+      }
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -3365,26 +3384,41 @@ class EZSound {
    * 
    */
   public void play() {
-    if( sound.getFramePosition() == sound.getFrameLength()  || 
+    if (usingMp3) {
+      if (mp3Player.getCurrentTime().toSeconds() == mp3Player.getTotalDuration().toSeconds()) {
+        mp3Player.stop();
+      }
+      mp3Player.play();
+    } else {
+      if( sound.getFramePosition() == sound.getFrameLength()  || 
         (sound.getFramePosition() != 0 && sound.isRunning()) ) {
-      sound.setFramePosition(0);
+        sound.setFramePosition(0);
+      }
+      sound.start();
     }
-    sound.start();
   }
 
   /**
    * This will stop the sound and reset back to the start.
    */
   public void stop() {
-    sound.stop();
-    sound.setFramePosition(0);
+    if (usingMp3) {
+      mp3Player.stop();
+    } else {
+      sound.stop();
+      sound.setFramePosition(0);
+    }
   } // end stop()
   
   /**
    *  Will pause the sound at it's current position. Using play() will resume from this point.
    */
   public void pause() {
-    sound.stop();
+    if (usingMp3) {
+      mp3Player.pause();
+    } else {
+      sound.stop();
+    }
   }
 
   /**
@@ -3392,8 +3426,12 @@ class EZSound {
    * 
    */
   public void loop() {
-    sound.setFramePosition(0);
-    sound.loop(Clip.LOOP_CONTINUOUSLY);
+    if (usingMp3) {
+      mp3Player.setCycleCount(mp3Player.INDEFINITE);
+    } else {
+      sound.setFramePosition(0);
+      sound.loop(Clip.LOOP_CONTINUOUSLY);
+    }
   }
 
   /**
@@ -3402,23 +3440,34 @@ class EZSound {
    * 
    */
   public boolean isPlaying() {
+    if (usingMp3) {
+      return mp3Player.getStatus().equals(MediaPlayer.Status.PLAYING); 
+    } // else, return the Clip value
     return sound.isRunning();
   }
   
   /** 
    * Returns how many frames are held within this sound file.
-   * @return Positive int value including zero indicating number of frames.
+   * If you are using an mp3, it cannot do frames. Instead the total duration in milliseconds is returned.
+   * @return Positive int value including zero indicating number of frames  (or millis if using mp3).
    * Otherwise -1 to indicate that the file's length cannot be determined.
    */
   public int getFrameLength() {
+    if (usingMp3) {
+      return (int)mp3Player.getTotalDuration().toMillis(); // mp3 can't do frame
+    } // else, return the Clip value
     return sound.getFrameLength();
   }
   
   /**
    * Returns the current frame of the sound file.
-   * @return Positive int value including zero indicating the current frame.
+   * If you are using an mp3, it cannot do frames. Instead the current time in milliseconds is returned.
+   * @return Positive int value including zero indicating the current frame (or millis if using mp3).
    */
   public int getFramePosistion() {
+    if (usingMp3) {
+      return (int)mp3Player.getCurrentTime().toMillis(); // mp3 can't do frame
+    } // else, return the Clip value
     return sound.getFramePosition();
   }
   
@@ -3428,6 +3477,9 @@ class EZSound {
    * Otherwise -1 to indicate the file's length cannot be determined.
    */
   public long getMicroSecondLength() {
+    if (usingMp3) {
+      return (int)mp3Player.getTotalDuration().toMillis() * 1000; // mp3 doesn't have micro accuracy.
+    } // else, return the Clip value
     return sound.getMicrosecondLength();
   }
   
@@ -3437,16 +3489,23 @@ class EZSound {
    * Otherwise -1 to indicate the file's position cannot be determined.
    */
   public long getMicroSecondPosition() {
+    if (usingMp3) {
+      return (int)mp3Player.getCurrentTime().toMillis() * 1000; // mp3 doesn't have micro accuracy.
+    } // else, return the Clip value
     return sound.getMicrosecondPosition();
   }
   
   /**
-   * Sets the position in frames from which to continue playing.
+   * Sets the position in frames (or millis if using mp3) from which to continue playing.
    * This will be overridden if stop() or loop() is called after this(they reset back to start).
-   * @param pos frame of the file to start from.
+   * @param pos frame of the file to start from (or millis if using mp3).
    */
   public void setFramePosition(int pos) {
-    sound.setFramePosition(pos);
+    if (usingMp3) {
+        mp3Player.seek(new Duration(pos)); // mp3 can't do frame
+    } else {
+      sound.setFramePosition(pos);
+    }
   }
 
   
@@ -3456,8 +3515,12 @@ class EZSound {
    * Note: the level of precision is based upon ms per frame.
    * @param pos milliseconds of the file to start from.
    */
-  public void setMicrosecondPosition(int pos) {
-    sound.setMicrosecondPosition(pos);
+  public void setMicrosecondPosition(long pos) {
+    if (usingMp3) {
+        mp3Player.seek(new Duration(pos / 1000)); // mp3 doesn't have micro accuracy.
+    } else {
+      sound.setMicrosecondPosition(pos);
+    }
   }
   
   

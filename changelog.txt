@@ -1,4 +1,13 @@
 
+v1.24
+8/26/2019
+
+New:
+	Support for playing mp3 files added.
+	Works almost interchangably, mp3 files do not have frame support. Frame calls will be working with time in milli.
+
+--------------------
+
 v1.23
 2/1/2018
 
